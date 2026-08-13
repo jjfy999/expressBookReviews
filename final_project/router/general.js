@@ -4,7 +4,7 @@ const { JsonWebTokenError } = require('jsonwebtoken');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-
+const axios = require('axios');
 
 public_users.post("/register", (req,res) => {
   //Write your code here
@@ -23,9 +23,14 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
+public_users.get('/', async function (req, res) {
   //Write your code here
-  res.send(JSON.stringify({books}, null, 4));
+  try {
+    const response = await axios.get('http://localhost:5000/');
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({message: 'Unable to retrieve books'});
+  }
 });
 
 // Get book details based on ISBN
