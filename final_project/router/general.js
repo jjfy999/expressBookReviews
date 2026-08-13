@@ -1,5 +1,6 @@
 const express = require('express');
 let books = require("./booksdb.js");
+const { JsonWebTokenError } = require('jsonwebtoken');
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
@@ -40,7 +41,15 @@ public_users.get('/author/:author',function (req, res) {
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  let booksByTitle = [];
+  let isbns = Object.keys(books);
+
+  isbns.forEach((isbn) => {
+    if (books[isbn]['title'] === req.params.title) {
+        booksByTitle.push({'isbn': isbn, 'title': books[isbn]['title'], 'author': books[isbn]['author'], 'reviews': books[isbn]['reviews']});
+    }
+  });
+  res.send(JSON.stringify({booksByTitle}, null, 4));
 });
 
 //  Get book review
